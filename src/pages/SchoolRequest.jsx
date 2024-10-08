@@ -36,6 +36,7 @@ const SchoolRequest = () => {
       .catch(error => {
         console.error('Error fetching regions:', error);
       });
+      
   }, []);
 
   const handleRegionChange = (e) => {
@@ -66,9 +67,8 @@ const SchoolRequest = () => {
       });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit =  async (e) => {
     e.preventDefault();
-
     // Submit the form data
     axios.post('http://localhost:8000/api/school-registration', formData)
       .then(response => {
@@ -79,16 +79,23 @@ const SchoolRequest = () => {
         }
       })
       .catch(error => {
-        if (error.response && error.response.status === 422) {
-          // Extract validation errors from the response
-          const validationErrors = error.response.data.errors;
-          // Display validation errors to the user
-          setNotification({ message: 'Validation failed. Please check your input.', type: 'error' });
-          console.log(validationErrors); // You can log or display these errors as needed
+        if (error.response) {
+          if (error.response.status === 422) {
+            // Extract validation errors from the response
+            const validationErrors = error.response.data.errors;
+            // Display validation errors to the user
+            setNotification({ message: 'Validation failed. Please check your input.', type: 'error' });
+            console.log(validationErrors); // You can log or display these errors as needed
+          } else {
+            setNotification({ message: 'Error submitting request.', type: 'error' });
+            console.log(error.response); // Log the full error response
+          }
         } else {
           setNotification({ message: 'Error submitting request.', type: 'error' });
+          console.log(error); // Log the entire error object
         }
       });
+      
 };
 
 

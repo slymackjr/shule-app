@@ -1,8 +1,9 @@
 // routes.js
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Home, Login, Parents, SchoolRequest, Service } from './pages';
+import { Home, Login, Parents, SchoolRequest, Service, TeacherLogin } from './pages';
 import './index.css';
 import { CreateClasses, CreateTeachers, HeadMasterDashboard, HeadMasterProfile, SchoolDetails, ViewClasses, ViewTeachers } from './components/HeadMaster';
+import { ProtectedRoutes } from './components/Auth';
 
 
 const App = () => {
@@ -21,6 +22,15 @@ const App = () => {
                 <Route path="/view-teachers" element={<ViewTeachers />} />
                 <Route path="/view-classes" element={<ViewClasses />} />
                 <Route path="/create-classes" element={<CreateClasses />} />
+                <Route path="/teacher-login" element={<TeacherLogin />} />
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoutes>
+                            <CreateClasses />
+                        </ProtectedRoutes>
+                    }
+                />
             </Routes>
         </BrowserRouter>
     );

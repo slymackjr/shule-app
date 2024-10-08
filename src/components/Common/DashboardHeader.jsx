@@ -34,6 +34,16 @@ const DashboardHeader = ({
         };
     }, []);
 
+    /* const handleLogout = async () => {
+        try {
+            await axios.post('http://localhost:8000/api/logout-teacher', {}, { withCredentials: true });
+            navigate('/login'); // Redirect to login after logout
+        } catch (err) {
+            console.error('Error logging out', err);
+        }
+    }; */
+    
+
     return (
         <div className="bg-gray-50 min-h-screen flex flex-col">
             {/* Navbar */}
