@@ -1,9 +1,9 @@
-// 
 import axios from 'axios';
 
-const instance = axios.create({
-    baseURL: 'http://localhost:8000/api', // Change this to your Laravel API URL
+const apiClient = axios.create({
+    baseURL: 'http://localhost:8000', // Change this to your Laravel API URL
     withCredentials: true, // Enable sending cookies
+    withXSRFToken: true,
 });
 
-export default instance;
+export default apiClient;

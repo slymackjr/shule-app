@@ -3,9 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiMail, FiLock } from 'react-icons/fi';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { skuliAppLogo } from '../assets/images';
-import axios from '../utils/axios';
-
-//axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+import axios from 'axios';
 
 const TeacherLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -15,20 +13,33 @@ const TeacherLogin = () => {
     email: '',
     password: '',
   });
-
+  axios.defaults.withCredentials = true;
+  axios.defaults.withXSRFToken = true;
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     try {
-        const response = await axios.post('/teacher-login', formData);
-        // Assuming the token is in an httpOnly cookie set by the Laravel backend
+      await axios.get('http://localhost:8000/sanctum/csrf-cookie');
+        const response = await axios.post('http://localhost:8000/api/teacher-login', formData);
+        const { token } = response.data; // Get the token from the response
+         // Save the token in local storage (or session storage)
+      localStorage.setItem('teacher_token', token);
+      setLoading(false);
+      console.log('Login successful:', response);
         setLoading(false);
+        const data = await axios.get('http://localhost:8000/api/teacher-details', {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add token in the Authorization header
+          },
+        });  
+        console.log('teacher details',data);
         navigate('/dashboard'); // Redirect to dashboard after successful login
     } catch (err) {
         setLoading(false);
+        console.error('Login Error:', err); // Log the entire error object
         if (err.response && err.response.status === 401) {
+          console.log(err.response);
             setError('Invalid credentials. Please try again.');
         } else if (err.response && err.response.data && err.response.data.message) {
             setError(err.response.data.message);
@@ -37,7 +48,6 @@ const TeacherLogin = () => {
         }
     }
 };
-
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 p-3">
@@ -92,5 +102,4 @@ const TeacherLogin = () => {
     </div>
   );
 };
-
 export default TeacherLogin;

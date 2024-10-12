@@ -67,36 +67,39 @@ const SchoolRequest = () => {
       });
   };
 
-  const handleSubmit =  async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Submit the form data
-    axios.post('http://localhost:8000/api/school-registration', formData)
-      .then(response => {
-        if (response.data.response) {
-          setNotification({ message: response.data.message, type: 'success' });
-        } else {
-          setNotification({ message: response.data.message, type: 'error' });
-        }
-      })
-      .catch(error => {
-        if (error.response) {
-          if (error.response.status === 422) {
-            // Extract validation errors from the response
-            const validationErrors = error.response.data.errors;
-            // Display validation errors to the user
-            setNotification({ message: 'Validation failed. Please check your input.', type: 'error' });
-            console.log(validationErrors); // You can log or display these errors as needed
+    try {
+      // Submit the form data
+      axios.post('http://localhost:8000/api/school-registration', formData)
+        .then(response => {
+          if (response.data.response) {
+            setNotification({ message: response.data.message, type: 'success' });
+          } else {
+            setNotification({ message: response.data.message, type: 'error' });
+          }
+        })
+        .catch(error => {
+          if (error.response) {
+            if (error.response.status === 422) {
+              // Extract validation errors from the response
+              const validationErrors = error.response.data.errors;
+              // Display validation errors to the user
+              setNotification({ message: 'Validation failed. Please check your input.', type: 'error' });
+              console.log(validationErrors); // You can log or display these errors as needed
+            } else {
+              setNotification({ message: 'Error submitting request.', type: 'error' });
+              console.log(error.response); // Log the full error response
+            }
           } else {
             setNotification({ message: 'Error submitting request.', type: 'error' });
-            console.log(error.response); // Log the full error response
+            console.log(error); // Log the entire error object
           }
-        } else {
-          setNotification({ message: 'Error submitting request.', type: 'error' });
-          console.log(error); // Log the entire error object
-        }
-      });
-      
-};
+        });
+    } catch (err) {
+      console.error('Error during form submission:', err);
+    }
+  };  
 
 
 
