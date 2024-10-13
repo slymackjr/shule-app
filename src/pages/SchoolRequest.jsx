@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { bg, skuliAppLogo } from '../assets/images';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'; // Import loading spinner icon
 
 const SchoolRequest = () => {
   const [formData, setFormData] = useState({
@@ -20,12 +21,16 @@ const SchoolRequest = () => {
     school_phone_number: '',  
     street: '',        
     postal_address: '', 
+    gender: '', 
+    role: '', 
+    motto: '', 
   });
 
   const [regions, setRegions] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
   const [notification, setNotification] = useState(null);
+  const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
     // Fetch regions on component mount
@@ -69,10 +74,13 @@ const SchoolRequest = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when the form is submitted
+    setNotification(null); // Clear previous notifications
     try {
       // Submit the form data
       axios.post('http://localhost:8000/api/school-registration', formData)
         .then(response => {
+          setLoading(false); // Set loading to false when the request completes
           if (response.data.response) {
             setNotification({ message: response.data.message, type: 'success' });
           } else {
@@ -80,24 +88,17 @@ const SchoolRequest = () => {
           }
         })
         .catch(error => {
-          if (error.response) {
-            if (error.response.status === 422) {
-              // Extract validation errors from the response
-              const validationErrors = error.response.data.errors;
-              // Display validation errors to the user
-              setNotification({ message: 'Validation failed. Please check your input.', type: 'error' });
-              console.log(validationErrors); // You can log or display these errors as needed
-            } else {
-              setNotification({ message: 'Error submitting request.', type: 'error' });
-              console.log(error.response); // Log the full error response
-            }
+          setLoading(false); // Set loading to false in case of error
+          if (error.response && error.response.status === 422) {
+            setNotification({ message: 'Validation failed. Please check your input.', type: 'error' });
           } else {
             setNotification({ message: 'Error submitting request.', type: 'error' });
-            console.log(error); // Log the entire error object
           }
         });
     } catch (err) {
+      setLoading(false); // Set loading to false in case of unexpected error
       console.error('Error during form submission:', err);
+      setNotification({ message: 'An unexpected error occurred.', type: 'error' });
     }
   };  
 
@@ -279,6 +280,33 @@ const SchoolRequest = () => {
                           onChange={(e) => setFormData({ ...formData, teacher_email: e.target.value })}
                         />
                       </div>
+
+                      <div>
+                        <label className="block text-indigo-600">Head Title</label>
+                        <select
+                          name="gender"
+                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          value={formData.gender}
+                          onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                          required
+                        >
+                          <option value="" disabled>Select Title</option>
+                          <option value="male">Head Master</option>
+                          <option value="female">Head Mistress</option>
+                        </select>
+                      </div>
+
+                       <div>
+                        <label className="block text-indigo-600">School Motto</label>
+                        <input
+                          type="text"
+                          name="motto"
+                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          value={formData.motto}
+                          onChange={(e) => setFormData({ ...formData, motto: e.target.value })}
+                        />
+                      </div>
+
                     </div>
                     
                     {/* New Fields: Street, Postal Address, and School Email */}
@@ -330,9 +358,10 @@ const SchoolRequest = () => {
 
                     <button
                       type="submit"
-                      className="mt-6 w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700"
+                      className={`mt-6 w-full flex justify-center py-3 rounded-md bg-indigo-600 text-white font-bold hover:bg-indigo-700`}
+                      disabled={loading} // Disable the button when loading is true
                     >
-                      Submit Request
+                      {loading ? <AiOutlineLoading3Quarters className="animate-spin" /> : 'Submit Request'} {/* Show loading spinner if loading */}
                     </button>
                   </form>
                   

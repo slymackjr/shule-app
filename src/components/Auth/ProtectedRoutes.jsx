@@ -1,21 +1,17 @@
-// src/components/ProtectedRoutes.js
-
+// ProtectedRoutes.js
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth'; // Custom hook to check authentication
 import PropTypes from 'prop-types';
 
 const ProtectedRoutes = ({ children }) => {
-    const { isAuthenticated, loading } = useAuth(); // Get auth status and loading state
+  const token = localStorage.getItem('teacher_token');
 
-    if (loading) {
-        return <div>Loading...</div>; // You might want to show a loading indicator while checking auth
-    }
+  // Check if token exists, if not, redirect to login page
+  if (!token) {
+    return <Navigate to="/teacher-login" replace />;
+  }
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" />; // Redirect to login if not authenticated
-    }
-
-    return children; // Render the protected component if authenticated
+  // If the token exists, allow access to the protected route
+  return children;
 };
 
 ProtectedRoutes.propTypes = {

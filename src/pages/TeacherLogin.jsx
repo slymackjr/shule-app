@@ -13,47 +13,61 @@ const TeacherLogin = () => {
     email: '',
     password: '',
   });
-  axios.defaults.withCredentials = true;
-  axios.defaults.withXSRFToken = true;
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    try {
-      await axios.get('http://localhost:8000/sanctum/csrf-cookie');
-        const response = await axios.post('http://localhost:8000/api/teacher-login', formData);
-        const { token } = response.data; // Get the token from the response
-         // Save the token in local storage (or session storage)
+
+ const handleLogin = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
+  
+  try {
+    // Get CSRF token
+    await axios.get('http://localhost:8000/sanctum/csrf-cookie');
+    
+    // Post the login data
+    const response = await axios.post('http://localhost:8000/api/teacher-login', formData);
+
+    if (response.data.response) {
+      const { token } = response.data; // Get the token from the response
+      
+      // Save the token in local storage
       localStorage.setItem('teacher_token', token);
-      setLoading(false);
-      console.log('Login successful:', response);
-        setLoading(false);
-        const data = await axios.get('http://localhost:8000/api/teacher-details', {
-          headers: {
-            Authorization: `Bearer ${token}`, // Add token in the Authorization header
-          },
-        });  
-        console.log('teacher details',data);
-        navigate('/dashboard'); // Redirect to dashboard after successful login
-    } catch (err) {
-        setLoading(false);
-        console.error('Login Error:', err); // Log the entire error object
-        if (err.response && err.response.status === 401) {
-          console.log(err.response);
-            setError('Invalid credentials. Please try again.');
-        } else if (err.response && err.response.data && err.response.data.message) {
-            setError(err.response.data.message);
-        } else {
-            setError('An unexpected error occurred. Please try again later.');
-        }
+
+      // Get teacher details using the token (optional, if needed)
+      const teacherDetails = await axios.get('http://localhost:8000/api/teacher-details', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('Teacher details:', teacherDetails.data);
+
+      // Redirect to the dashboard
+      navigate('/head-master-dashboard');
+    } else {
+      setError(response.data.message || 'Login failed. Please try again.');
     }
+
+    setLoading(false);
+  } catch (err) {
+    setLoading(false);
+    console.error('Login Error:', err);
+    if (err.response && err.response.status === 401) {
+      setError('Invalid credentials. Please try again.');
+    } else if (err.response && err.response.data && err.response.data.message) {
+      setError(err.response.data.message);
+    } else {
+      setError('An unexpected error occurred. Please try again later.');
+    }
+  }
 };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 p-3">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <div className="flex justify-center">
+          <Link to={'/'}>
           <img src={skuliAppLogo} alt="SkuliApp Logo" className="w-32" />
+          </Link>
         </div>
         <h2 className="text-center text-2xl font-extrabold text-gray-900">Teacher Login</h2>
         
