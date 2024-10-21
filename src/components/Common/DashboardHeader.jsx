@@ -186,7 +186,7 @@ const DashboardHeader = ({
                     </ul>
                 </aside>
 
-                <main className="flex-1 p-4 lg:ml-50">
+                <main className="flex-1 p-4 lg:ml-50 max-w-full">
                     {children}
                 </main>
             </div>

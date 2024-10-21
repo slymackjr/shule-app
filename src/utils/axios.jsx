@@ -1,9 +1,16 @@
+// Axios.jsx
 import axios from 'axios';
 
-const apiClient = axios.create({
-    baseURL: 'http://localhost:8000', // Change this to your Laravel API URL
-    withCredentials: true, // Enable sending cookies
-    withXSRFToken: true,
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:8000/api',
 });
 
-export default apiClient;
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default axiosInstance;

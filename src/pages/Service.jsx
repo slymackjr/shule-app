@@ -4,7 +4,7 @@ import { bg, graph, parents, school, skuliAppLogo, student } from '../assets/ima
 
 const Service = () => {
   return (
-    <div className="bg-sky-300 text-gray-700">
+    <div className="bg-indigo-50 text-gray-700">
       {/* Header */}
       <header className="container mx-auto py-5">
         <div className="flex justify-center md:justify-between items-center">

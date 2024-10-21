@@ -21,7 +21,7 @@ const TeacherLogin = () => {
   
   try {
     // Get CSRF token
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie');
+    //await axios.get('http://localhost:8000/sanctum/csrf-cookie');
     
     // Post the login data
     const response = await axios.post('http://localhost:8000/api/teacher-login', formData);

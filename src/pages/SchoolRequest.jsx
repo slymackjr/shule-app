@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { bg, skuliAppLogo } from '../assets/images';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'; // Import loading spinner icon
+import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; // Import success and error icons
 
 const SchoolRequest = () => {
   const [formData, setFormData] = useState({
@@ -26,10 +29,10 @@ const SchoolRequest = () => {
     motto: '', 
   });
 
+  const [errors, setErrors] = useState({}); // Holds validation errors
   const [regions, setRegions] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
-  const [notification, setNotification] = useState(null);
   const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
@@ -75,30 +78,64 @@ const SchoolRequest = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Set loading to true when the form is submitted
-    setNotification(null); // Clear previous notifications
+    setErrors({}); // Reset errors
+
     try {
       // Submit the form data
-      axios.post('http://localhost:8000/api/school-registration', formData)
+      await axios.post('http://localhost:8000/api/school-registration', formData)
         .then(response => {
           setLoading(false); // Set loading to false when the request completes
           if (response.data.response) {
-            setNotification({ message: response.data.message, type: 'success' });
+             // Display success toast
+             toast.success(
+              <div className="flex items-center">
+                <FaCheckCircle className="text-white bg-green-500 rounded-full mr-2 p-1" />
+                {response.data.message}
+              </div>,
+              { position: 'top-center' }
+            );
           } else {
-            setNotification({ message: response.data.message, type: 'error' });
+            // Display error toast
+            toast.error(
+              <div className="flex items-center">
+                <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
+                {response.data.message}
+              </div>,
+              { position: 'top-center' }
+            );
           }
         })
         .catch(error => {
           setLoading(false); // Set loading to false in case of error
           if (error.response && error.response.status === 422) {
-            setNotification({ message: 'Validation failed. Please check your input.', type: 'error' });
+            setErrors(error.response.data.errors); // Set validation errors
+            toast.error(
+              <div className="flex items-center">
+                <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
+                Validation failed. Please check your input.
+              </div>,
+              { position: 'top-center' }
+            );
           } else {
-            setNotification({ message: 'Error submitting request.', type: 'error' });
+            toast.error(
+              <div className="flex items-center">
+                <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
+                Error submitting request.
+              </div>,
+              { position: 'top-center' }
+            );
           }
         });
     } catch (err) {
       setLoading(false); // Set loading to false in case of unexpected error
       console.error('Error during form submission:', err);
-      setNotification({ message: 'An unexpected error occurred.', type: 'error' });
+      toast.error(
+        <div className="flex items-center">
+          <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
+          An unexpected error occurred.
+        </div>,
+        { position: 'top-center' }
+      );
     }
   };  
 
@@ -106,6 +143,16 @@ const SchoolRequest = () => {
 
   return (
     <div className="bg-indigo-50 min-h-screen">
+      {/* Toast Container */}
+      <ToastContainer
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={true}
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
+
       <header className="bg-white shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link to="/">
@@ -133,11 +180,12 @@ const SchoolRequest = () => {
                         <input
                           type="text"
                           name="school_name"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.school_name ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.school_name}
                           onChange={(e) => setFormData({ ...formData, school_name: e.target.value })}
                           required
                         />
+                        {errors.school_name && <p className="text-red-600">{errors.school_name[0]}</p>}
                       </div>
 
                       <div>
@@ -145,17 +193,19 @@ const SchoolRequest = () => {
                         <input
                           type="text"
                           name="school_registration_number"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.school_registration_number ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.school_registration_number}
                           onChange={(e) => setFormData({ ...formData, school_registration_number: e.target.value })}
+                          required
                         />
+                        {errors.school_registration_number && <p className="text-red-600">{errors.school_registration_number[0]}</p>}
                       </div>
 
                       <div>
                         <label className="block text-indigo-600">Sponsorship Type</label>
                         <select
                           name="type"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.type ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.type}
                           onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                           required
@@ -164,21 +214,24 @@ const SchoolRequest = () => {
                           <option value="government">Government</option>
                           <option value="private">Private</option>
                         </select>
+                        {errors.type && <p className="text-red-600">{errors.type[0]}</p>}
                       </div>
 
                       <div>
                         <label className="block text-indigo-600">Level</label>
                         <select
                           name="level"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.level ? 'border-red-600' : 'border-indigo-600'}  rounded-md`}
                           value={formData.level}
                           onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                          required
                         >
                           <option value="" disabled>Select Level</option>
                           <option value="primary">Primary</option>
                           <option value="O level">O level</option>
                           <option value="A level">A level</option>
                         </select>
+                        {errors.level && <p className="text-red-600">{errors.level[0]}</p>}
                       </div>
                     </div>
 
@@ -188,47 +241,53 @@ const SchoolRequest = () => {
                         <label className="block text-indigo-600">Region</label>
                         <select
                           name="region"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.region ? 'bordeer-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.region}
                           onChange={handleRegionChange}
+                          required
                         >
                           <option value="" disabled>Select Region</option>
                           {regions.map(region => (
                             <option key={region.id} value={region.id}>{region.name}</option>
                           ))}
                         </select>
+                        {errors.region && <p className="text-red-600">{errors.region[0]}</p>}
                       </div>
 
                       <div>
                         <label className="block text-indigo-600">District</label>
                         <select
                           name="district"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.district ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.district}
                           onChange={handleDistrictChange}
                           disabled={!districts.length}
+                          required
                         >
                           <option value="" disabled>Select District</option>
                           {districts.map(district => (
                             <option key={district.id} value={district.id}>{district.name}</option>
                           ))}
                         </select>
+                        {errors.district && <p className="text-red-600">{errors.district[0]}</p>}
                       </div>
 
                       <div>
                         <label className="block text-indigo-600">Ward</label>
                         <select
                           name="ward"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.ward ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.ward}
                           onChange={(e) => setFormData({ ...formData, ward: e.target.value })}
                           disabled={!wards.length}
+                          required
                         >
                           <option value="" disabled>Select Ward</option>
                           {wards.map(ward => (
                             <option key={ward.id} value={ward.id}>{ward.name}</option>
                           ))}
                         </select>
+                        {errors.ward && <p className="text-red-600">{errors.ward[0]}</p>}
                       </div>
                     </div>
 
@@ -239,11 +298,12 @@ const SchoolRequest = () => {
                         <input
                           type="text"
                           name="first_name"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.first_name ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.first_name}
                           onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
                           required
                         />
+                        {errors.first_name && <p className="text-red-600">{errors.first_name[0]}</p>}
                       </div>
 
                       <div>
@@ -251,11 +311,12 @@ const SchoolRequest = () => {
                         <input
                           type="text"
                           name="last_name"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.last_name ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.last_name}
                           onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
                           required
                         />
+                        {errors.last_name && <p className="text-red-600">{errors.last_name[0]}</p>}
                       </div>
 
                       <div>
@@ -263,11 +324,12 @@ const SchoolRequest = () => {
                         <input
                           type="text"
                           name="phone_number"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.phone_number ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.phone_number}
                           onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
                           required
                         />
+                        {errors.phone_number && <p className="text-red-600">{errors.phone_number[0]}</p>}
                       </div>
 
                       <div>
@@ -275,17 +337,19 @@ const SchoolRequest = () => {
                         <input
                           type="email"
                           name="teacher_email"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.teacher_email ? 'border-red-6000' : 'border-indigo-600'} rounded-md`}
                           value={formData.teacher_email}
                           onChange={(e) => setFormData({ ...formData, teacher_email: e.target.value })}
+                          required
                         />
+                        {errors.teacher_email && <p className="text-red-600">{errors.teacher_email[0]}</p>}
                       </div>
 
                       <div>
                         <label className="block text-indigo-600">Head Title</label>
                         <select
                           name="gender"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.gender ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.gender}
                           onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                           required
@@ -294,6 +358,7 @@ const SchoolRequest = () => {
                           <option value="male">Head Master</option>
                           <option value="female">Head Mistress</option>
                         </select>
+                        {errors.gender && <p className="text-red-600">{errors.gender[0]}</p>}
                       </div>
 
                        <div>
@@ -301,10 +366,12 @@ const SchoolRequest = () => {
                         <input
                           type="text"
                           name="motto"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.motto ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.motto}
                           onChange={(e) => setFormData({ ...formData, motto: e.target.value })}
+                          required
                         />
+                        {errors.motto && <p className="text-red-600">{errors.motto[0]}</p>}
                       </div>
 
                     </div>
@@ -316,10 +383,12 @@ const SchoolRequest = () => {
                         <input
                           type="text"
                           name="street"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.street ? 'border-red-600' : 'border-indigo-600'} rounded-md`} 
                           value={formData.street}
                           onChange={(e) => setFormData({ ...formData, street: e.target.value })}
+                          required
                         />
+                        {errors.street && <p className="text-red-600">{errors.street[0]}</p>}
                       </div>
 
                       <div>
@@ -327,10 +396,12 @@ const SchoolRequest = () => {
                         <input
                           type="text"
                           name="postal_address"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.postal_address ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.postal_address}
                           onChange={(e) => setFormData({ ...formData, postal_address: e.target.value })}
+                          required
                         />
+                        {errors.postal_address && <p className="text-red-600">{errors.postal_address[0]}</p>}
                       </div>
 
                       <div>
@@ -338,21 +409,25 @@ const SchoolRequest = () => {
                         <input
                           type="email"
                           name="school_email"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          className={`w-full p-2 border ${errors.school_email ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.school_email}
                           onChange={(e) => setFormData({ ...formData, school_email: e.target.value })}
+                          required
                         />
+                        {errors.school_email && <p className="text-red-600">{errors.school_email[0]}</p>}
                       </div>
 
                       <div>
-                        <label className="block text-indigo-600">School Number</label>
+                        <label className="block text-indigo-600">School Phone Number</label>
                         <input
                           type="text"
-                          name="school_number"
-                          className="w-full p-2 border border-indigo-600 rounded-md"
+                          name="school_phone_number"
+                          className={`w-full p-2 border ${errors.school_phone_number ? 'border-red' : 'border-indigo-600'} rounded-md`}
                           value={formData.school_phone_number}
                           onChange={(e) => setFormData({ ...formData, school_phone_number: e.target.value })}
+                          required
                         />
+                        {errors.school_phone_number && <p className="text-red-600">{errors.school_phone_number[0]}</p>}
                       </div>
                     </div>
 
@@ -364,12 +439,6 @@ const SchoolRequest = () => {
                       {loading ? <AiOutlineLoading3Quarters className="animate-spin" /> : 'Submit Request'} {/* Show loading spinner if loading */}
                     </button>
                   </form>
-                  
-                  {notification && (
-                    <p className={`mt-4 text-center font-bold ${notification.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-                      {notification.message}
-                    </p>
-                  )}
                 </div>
                 <div className="hidden md:block md:w-1/2 bg-indigo-100">
                 <img

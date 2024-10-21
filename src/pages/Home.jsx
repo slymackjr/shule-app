@@ -11,56 +11,6 @@ const Home = () => {
               <img src={skuliAppLogo} alt="SkuliApp Logo" className="w-40" />
             </Link>
           </div>
-          {/* Assuming you have a way to check authentication in your React app */}
-          {true && ( // Replace 'true' with your authentication check
-            <div className="flex items-center">
-              <div className="flex items-center ms-3">
-                <div>
-                  <button
-                    type="button"
-                    className="flex ring-1 overflow-clip text-blue-600 hover:text-blue-400 rounded-full focus:ring-2 focus:ring-gray-300"
-                    aria-expanded="false"
-                    data-dropdown-toggle="dropdown-user"
-                  >
-                    {/* Replace <x-fas-user /> with an appropriate icon component */}
-                    <img src="/path-to-your-icon.png" alt="User  Icon" className="w-10 h-10 rounded-full" />
-                  </button>
-                </div>
-                <div
-                  className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow"
-                  id="dropdown-user"
-                >
-                  <div className="px-4 py-3" role="none">
-                    <p className="text-sm text-gray-900" role="none">
-                      {/* Replace with your logic to display user's name */}
-                      {true ? 'User  Name' : 'Hello!, Guest'}
-                    </p>
-                    <p className="text-sm font-medium text-gray-900 truncate" role="none">
-                      {/* Replace with your logic to display user's email */}
-                      {true ? 'user@example.com' : 'guest@altus.tz'}
-                    </p>
-                  </div>
-                  <ul>
-                    <li className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      <Link to="/dashboard">Dashboard</Link>
-                    </li>
-                    <li>
-                      <form action="/logout.auth" method="POST">
-                        {/* Implement CSRF protection in your React app if needed */}
-                        <button
-                          type="submit"
-                          className="block text-left w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          role="menuitem"
-                        >
-                          Sign Out
-                        </button>
-                      </form>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </header>
       <main className="h-auto sm:h-auto md:h-auto lg:h-screen px-2 mb-auto mx-2">
