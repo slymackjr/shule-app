@@ -25,9 +25,8 @@ const App = () => {
                 <Route
                     path="/head-master-dashboard"
                     element={
-                        <ProtectedRoutes>
                             <HeadMasterDashboard />
-                        </ProtectedRoutes>
+                       /*  </ProtectedRoutes> */
                     }
                 />
             </Routes>

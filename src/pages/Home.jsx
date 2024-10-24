@@ -27,7 +27,7 @@ const Home = () => {
               SkuliApp is a collaborative teaching and learning digital platform, enabling parents and teachers to
               remotely work together to improve pupils learning experience. The ultimate goal is to make teaching and
               learning process more fun and enjoyable and subsequently increase teachers productivity and pupils
-              performance. Click <Link to="/service" className="here text-blue-800">here</Link> for more details about the platform.
+              performance. Click <Link to="/service" className="here text-yellow-400">here</Link> for more details about the platform.
             </p>
             <div className="my-5">
               <Link
