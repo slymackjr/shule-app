@@ -9,76 +9,22 @@ import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; // Import success
 
 const SchoolRequest = () => {
   const [formData, setFormData] = useState({
-    school_name: '',
-    school_registration_number: '',
-    type: '',
-    level: '',
-    region: '',
-    district: '',
-    ward: '',
-    first_name: '',
-    last_name: '',
-    phone_number: '', 
-    teacher_email: '', 
-    school_email: '',  
-    school_phone_number: '',  
-    street: '',        
-    postal_address: '', 
-    gender: '', 
-    role: '', 
-    motto: '', 
+    emial: '',
+    phone: '',
+    address: '',
+    postal_code: '',
+    city: '',
+    school_type: '',
+    fullname: '',
   });
 
-  const [errors, setErrors] = useState({}); // Holds validation errors
-  const [regions, setRegions] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-  const [loading, setLoading] = useState(false); // Add loading state
-
-  useEffect(() => {
-    // Fetch regions on component mount
-    axios.get('http://localhost:8000/api/regions')
-      .then(response => {
-        setRegions(response.data.regions);
-      })
-      .catch(error => {
-        console.error('Error fetching regions:', error);
-      });
-      
-  }, []);
-
-  const handleRegionChange = (e) => {
-    const selectedRegion = e.target.value;
-    setFormData({ ...formData, region: selectedRegion });
-
-    // Fetch districts based on selected region
-    axios.get(`http://localhost:8000/api/district?region=${selectedRegion}`)
-      .then(response => {
-        setDistricts(response.data.districts);
-      })
-      .catch(error => {
-        console.error('Error fetching districts:', error);
-      });
-  };
-
-  const handleDistrictChange = (e) => {
-    const selectedDistrict = e.target.value;
-    setFormData({ ...formData, district: selectedDistrict });
-
-    // Fetch wards based on selected district
-    axios.get(`http://localhost:8000/api/wards?district=${selectedDistrict}`)
-      .then(response => {
-        setWards(response.data.wards);
-      })
-      .catch(error => {
-        console.error('Error fetching wards:', error);
-      });
-  };
+  const [errors, setErrors] = useState({}); 
+  const [loading, setLoading] = useState(false); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when the form is submitted
-    setErrors({}); // Reset errors
+    setLoading(true);
+    setErrors({}); 
 
     try {
       // Submit the form data
@@ -176,268 +122,104 @@ const SchoolRequest = () => {
                     {/* School Details */}
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div>
-                        <label className="block text-indigo-600">School Name</label>
+                        <label className="block text-indigo-600">Full Name</label>
                         <input
                           type="text"
-                          name="school_name"
-                          className={`w-full p-2 border ${errors.school_name ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.school_name}
-                          onChange={(e) => setFormData({ ...formData, school_name: e.target.value })}
+                          name="fullname"
+                          className={`w-full p-2 border ${errors.fullname ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
+                          value={formData.fullname}
+                          onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+                          placeholder="Enter Your Full Name"
                           required
                         />
-                        {errors.school_name && <p className="text-red-600">{errors.school_name[0]}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-indigo-600">Registration Number</label>
-                        <input
-                          type="text"
-                          name="school_registration_number"
-                          className={`w-full p-2 border ${errors.school_registration_number ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.school_registration_number}
-                          onChange={(e) => setFormData({ ...formData, school_registration_number: e.target.value })}
-                          required
-                        />
-                        {errors.school_registration_number && <p className="text-red-600">{errors.school_registration_number[0]}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-indigo-600">Sponsorship Type</label>
-                        <select
-                          name="type"
-                          className={`w-full p-2 border ${errors.type ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.type}
-                          onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                          required
-                        >
-                          <option value="" disabled>Select Type</option>
-                          <option value="government">Government</option>
-                          <option value="private">Private</option>
-                        </select>
-                        {errors.type && <p className="text-red-600">{errors.type[0]}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-indigo-600">Level</label>
-                        <select
-                          name="level"
-                          className={`w-full p-2 border ${errors.level ? 'border-red-600' : 'border-indigo-600'}  rounded-md`}
-                          value={formData.level}
-                          onChange={(e) => setFormData({ ...formData, level: e.target.value })}
-                          required
-                        >
-                          <option value="" disabled>Select Level</option>
-                          <option value="primary">Primary</option>
-                          <option value="O level">O level</option>
-                          <option value="A level">A level</option>
-                        </select>
-                        {errors.level && <p className="text-red-600">{errors.level[0]}</p>}
-                      </div>
-                    </div>
-
-                    {/* Region, District, and Ward */}
-                    <div className="grid gap-4 sm:grid-cols-3">
-                      <div>
-                        <label className="block text-indigo-600">Region</label>
-                        <select
-                          name="region"
-                          className={`w-full p-2 border ${errors.region ? 'bordeer-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.region}
-                          onChange={handleRegionChange}
-                          required
-                        >
-                          <option value="" disabled>Select Region</option>
-                          {regions.map(region => (
-                            <option key={region.id} value={region.id}>{region.name}</option>
-                          ))}
-                        </select>
-                        {errors.region && <p className="text-red-600">{errors.region[0]}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-indigo-600">District</label>
-                        <select
-                          name="district"
-                          className={`w-full p-2 border ${errors.district ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.district}
-                          onChange={handleDistrictChange}
-                          disabled={!districts.length}
-                          required
-                        >
-                          <option value="" disabled>Select District</option>
-                          {districts.map(district => (
-                            <option key={district.id} value={district.id}>{district.name}</option>
-                          ))}
-                        </select>
-                        {errors.district && <p className="text-red-600">{errors.district[0]}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-indigo-600">Ward</label>
-                        <select
-                          name="ward"
-                          className={`w-full p-2 border ${errors.ward ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.ward}
-                          onChange={(e) => setFormData({ ...formData, ward: e.target.value })}
-                          disabled={!wards.length}
-                          required
-                        >
-                          <option value="" disabled>Select Ward</option>
-                          {wards.map(ward => (
-                            <option key={ward.id} value={ward.id}>{ward.name}</option>
-                          ))}
-                        </select>
-                        {errors.ward && <p className="text-red-600">{errors.ward[0]}</p>}
-                      </div>
-                    </div>
-
-                    {/* Head Master Details */}
-                    <div className="grid gap-4 sm:grid-cols-2 mt-4">
-                      <div>
-                        <label className="block text-indigo-600">First Name</label>
-                        <input
-                          type="text"
-                          name="first_name"
-                          className={`w-full p-2 border ${errors.first_name ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.first_name}
-                          onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                          required
-                        />
-                        {errors.first_name && <p className="text-red-600">{errors.first_name[0]}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-indigo-600">Last Name</label>
-                        <input
-                          type="text"
-                          name="last_name"
-                          className={`w-full p-2 border ${errors.last_name ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.last_name}
-                          onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                          required
-                        />
-                        {errors.last_name && <p className="text-red-600">{errors.last_name[0]}</p>}
+                        {errors.fullname && <p className="text-red-600">{errors.fullname[0]}</p>}
                       </div>
 
                       <div>
                         <label className="block text-indigo-600">Phone Number</label>
                         <input
                           type="text"
-                          name="phone_number"
-                          className={`w-full p-2 border ${errors.phone_number ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.phone_number}
-                          onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
+                          name="phone"
+                          className={`w-full p-2 border ${errors.phone ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          placeholder='Enter Your Phone Number'
                           required
                         />
-                        {errors.phone_number && <p className="text-red-600">{errors.phone_number[0]}</p>}
+                        {errors.phone && <p className="text-red-600">{errors.phone[0]}</p>}
                       </div>
 
                       <div>
-                        <label className="block text-indigo-600">Teacher Email</label>
-                        <input
-                          type="email"
-                          name="teacher_email"
-                          className={`w-full p-2 border ${errors.teacher_email ? 'border-red-6000' : 'border-indigo-600'} rounded-md`}
-                          value={formData.teacher_email}
-                          onChange={(e) => setFormData({ ...formData, teacher_email: e.target.value })}
-                          required
-                        />
-                        {errors.teacher_email && <p className="text-red-600">{errors.teacher_email[0]}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-indigo-600">Head Title</label>
-                        <select
-                          name="gender"
-                          className={`w-full p-2 border ${errors.gender ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.gender}
-                          onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                          required
-                        >
-                          <option value="" disabled>Select Title</option>
-                          <option value="male">Head Master</option>
-                          <option value="female">Head Mistress</option>
-                        </select>
-                        {errors.gender && <p className="text-red-600">{errors.gender[0]}</p>}
-                      </div>
-
-                       <div>
-                        <label className="block text-indigo-600">School Motto</label>
+                        <label className="block text-indigo-600">Address</label>
                         <input
                           type="text"
-                          name="motto"
-                          className={`w-full p-2 border ${errors.motto ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.motto}
-                          onChange={(e) => setFormData({ ...formData, motto: e.target.value })}
+                          name="address"
+                          className={`w-full p-2 border ${errors.address ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
+                          value={formData.address}
+                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          placeholder='Enter Your Address'
                           required
                         />
-                        {errors.motto && <p className="text-red-600">{errors.motto[0]}</p>}
+                        {errors.type && <p className="text-red-600">{errors.type[0]}</p>}
                       </div>
 
+                      <div>
+                        <label className="block text-indigo-600">Postal Code</label>
+                        <input
+                          type="text"
+                          name="postal_code"
+                          className={`w-full p-2 border ${errors.postal_code ? 'border-red-600' : 'border-indigo-600'}  rounded-md`}
+                          value={formData.postal_code}
+                          onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
+                          placeholder='Enter Your Postal Code'
+                          required
+                        />
+                        {errors.postal_code && <p className="text-red-600">{errors.postal_code[0]}</p>}
+                      </div>
                     </div>
-                    
-                    {/* New Fields: Street, Postal Address, and School Email */}
+
+                    {/* Head Master Details */}
                     <div className="grid gap-4 sm:grid-cols-2 mt-4">
                       <div>
-                        <label className="block text-indigo-600">Street</label>
+                        <label className="block text-indigo-600">City</label>
                         <input
                           type="text"
-                          name="street"
-                          className={`w-full p-2 border ${errors.street ? 'border-red-600' : 'border-indigo-600'} rounded-md`} 
-                          value={formData.street}
-                          onChange={(e) => setFormData({ ...formData, street: e.target.value })}
+                          name="city"
+                          className={`w-full p-2 border ${errors.city ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
+                          value={formData.city}
+                          onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                          placeholder='Enter Your City'
                           required
                         />
-                        {errors.street && <p className="text-red-600">{errors.street[0]}</p>}
+                        {errors.city && <p className="text-red-600">{errors.city[0]}</p>}
                       </div>
 
                       <div>
-                        <label className="block text-indigo-600">Postal Address (P.O. Box)</label>
-                        <input
-                          type="text"
-                          name="postal_address"
-                          className={`w-full p-2 border ${errors.postal_address ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.postal_address}
-                          onChange={(e) => setFormData({ ...formData, postal_address: e.target.value })}
+                        <label className="block text-indigo-600">Shool Level</label>
+                        <select
+                          name="school_type"
+                          className={`w-full p-2 border ${errors.school_type ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
+                          value={formData.school_type}
+                          onChange={(e) => setFormData({ ...formData, school_type: e.target.value })}
                           required
-                        />
-                        {errors.postal_address && <p className="text-red-600">{errors.postal_address[0]}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-indigo-600">School Email</label>
-                        <input
-                          type="email"
-                          name="school_email"
-                          className={`w-full p-2 border ${errors.school_email ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.school_email}
-                          onChange={(e) => setFormData({ ...formData, school_email: e.target.value })}
-                          required
-                        />
-                        {errors.school_email && <p className="text-red-600">{errors.school_email[0]}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-indigo-600">School Phone Number</label>
-                        <input
-                          type="text"
-                          name="school_phone_number"
-                          className={`w-full p-2 border ${errors.school_phone_number ? 'border-red' : 'border-indigo-600'} rounded-md`}
-                          value={formData.school_phone_number}
-                          onChange={(e) => setFormData({ ...formData, school_phone_number: e.target.value })}
-                          required
-                        />
-                        {errors.school_phone_number && <p className="text-red-600">{errors.school_phone_number[0]}</p>}
+                          >
+                          <option value="" disabled>Select Title</option>
+                          <option value="primary">Primary</option>
+                          <option value="secondary">Secondary</option>
+                          <option value="high school">High School</option>
+                        </select>
+                        {errors.school_type && <p className="text-red-600">{errors.school_type[0]}</p>}
                       </div>
                     </div>
-
+                    <div className="flex justify-center">
                     <button
                       type="submit"
-                      className={`mt-6 w-full flex justify-center py-3 rounded-md bg-indigo-600 text-white font-bold hover:bg-indigo-700`}
+                      className={`mt-2 w-40 flex justify-center py-3 rounded-md bg-indigo-600 text-white font-bold hover:bg-indigo-700`}
                       disabled={loading} // Disable the button when loading is true
                     >
                       {loading ? <AiOutlineLoading3Quarters className="animate-spin" /> : 'Submit Request'} {/* Show loading spinner if loading */}
                     </button>
+                    </div>
                   </form>
                 </div>
                 <div className="hidden md:block md:w-1/2 bg-indigo-100">
