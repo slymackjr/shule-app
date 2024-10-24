@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Home, Login, Parents, SchoolRequest, Service, TeacherLogin } from './pages';
 import './index.css';
 import { CreateClasses, CreateTeachers, HeadMasterDashboard, HeadMasterProfile, SchoolDetails, ViewClasses, ViewTeachers } from './components/HeadMaster';
+import AdminDashboard from './components/Admin/AdminDashboard'
 import { ProtectedRoutes } from './components/Auth';
 
 
@@ -11,6 +12,7 @@ const App = () => {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path='/dashboard' element={<AdminDashboard/>} />
                 <Route path="/service" element={<Service />} />
                 <Route path="/parents" element={<Parents />} />
                 <Route path="/school-request" element={<SchoolRequest />} />

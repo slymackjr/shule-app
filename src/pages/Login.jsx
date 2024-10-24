@@ -11,24 +11,24 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         // Clear previous error
         setError(null);
-
+    
         try {
-            // Make request to Laravel API for login
-            const response = await axios.post("http://localhost:8000/api/login", {
+            // Make request to Laravel API for login (add 'http://' to the URL)
+            const response = await axios.post("http://51.222.207.88:8005/api/v1/login", {
                 email,
                 password
             });
-
+    
             // Store token in localStorage
             const token = response.data.token;
             localStorage.setItem("authToken", token);
-
+    
             // Redirect to home page or dashboard
-            navigate("/home");
-
+            navigate("/dashboard");
+    
         } catch (err) {
             // Handle errors from Laravel API
             if (err.response && err.response.data.message) {
@@ -38,7 +38,7 @@ const Login = () => {
             }
         }
     };
-
+    
     return (
         <div className="bg-indigo-50 min-h-screen">
             <header className="bg-white shadow">
