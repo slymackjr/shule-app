@@ -178,18 +178,7 @@ const AdminHeader = ({ children, activeLink }) => {
           <FaSchool className="mr-2" /> Schools
         </Link>
       </li>
-      <li>
-        <Link
-          to="/"
-          className={`flex items-center ${
-            activeLink === "school-details"
-              ? activeLinkStyle
-              : defaultLink
-          } p-2 rounded-lg`}
-        >
-          <FaSchool className="mr-2" /> Schools
-        </Link>
-      </li>
+      
     </ul>
   </aside>
 
