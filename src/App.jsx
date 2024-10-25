@@ -5,14 +5,17 @@ import './index.css';
 import { CreateClasses, CreateTeachers, HeadMasterDashboard, HeadMasterProfile, SchoolDetails, ViewClasses, ViewTeachers } from './components/HeadMaster';
 import AdminDashboard from './components/Admin/AdminDashboard'
 import { ProtectedRoutes } from './components/Auth';
-
+import PrivateRoute from './components/Auth/PrivateRoute';
 
 const App = () => {
     return (
-        <BrowserRouter>
+<BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path='/dashboard' element={<AdminDashboard/>} />
+                <Route 
+                    path="/admin-dashboard" 
+                    element={<PrivateRoute element={<AdminDashboard />} />} 
+                />
                 <Route path="/service" element={<Service />} />
                 <Route path="/parents" element={<Parents />} />
                 <Route path="/school-request" element={<SchoolRequest />} />
@@ -24,12 +27,9 @@ const App = () => {
                 <Route path="/view-classes" element={<ViewClasses />} />
                 <Route path="/create-classes" element={<CreateClasses />} />
                 <Route path="/teacher-login" element={<TeacherLogin />} />
-                <Route
+                <Route 
                     path="/head-master-dashboard"
-                    element={
-                            <HeadMasterDashboard />
-                       /*  </ProtectedRoutes> */
-                    }
+                    element={<PrivateRoute element={<HeadMasterDashboard />} />} // Make this route private if needed
                 />
             </Routes>
         </BrowserRouter>

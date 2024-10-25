@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom'; // Assuming you're using react-router for navigation
 import { home, skuliAppLogo } from '../assets/images';
+import Layout from './layout';
 
 const Home = () => {
   return (
+    <div>
+      <Layout/>
+  
     <div className="bg-indigo-50 min-h-screen">
       <header className="bg-white shadow">
         <div className="flex justify-between sm:px-5 sm:py-1">
@@ -67,6 +71,7 @@ const Home = () => {
                     </div>
                 </div>
       </footer>
+    </div>
     </div>
   );
 };

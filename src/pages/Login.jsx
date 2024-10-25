@@ -16,18 +16,25 @@ const Login = () => {
         setError(null);
     
         try {
-            // Make request to Laravel API for login (add 'http://' to the URL)
+            // Make request to Laravel API for login
             const response = await axios.post("http://51.222.207.88:8005/api/v1/login", {
                 email,
                 password
             });
     
-            // Store token in localStorage
-            const token = response.data.token;
-            localStorage.setItem("authToken", token);
+            // Log the entire response to check where the token is
+    
+            // Store token in localStorage (assuming the token is inside response.data)
+            const token = response.data.access_token; // Adjust if the token is located elsewhere in the response
+            if (token) {
+                localStorage.setItem("authToken", token);
+                console.log('Token stored:', token);
+            } else {
+                console.error('No token found in the response.');
+            }
     
             // Redirect to home page or dashboard
-            navigate("/dashboard");
+            navigate("/admin-dashboard");
     
         } catch (err) {
             // Handle errors from Laravel API
