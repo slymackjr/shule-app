@@ -12,7 +12,7 @@ import {
   FaUser,
   FaPlusCircle,
   FaEye,
-  FaCheckCircle, FaClock
+  FaCheckCircle, FaClock, FaFileAlt
 } from "react-icons/fa";
 import { skuliAppLogo } from "../../assets/images";
 import PropTypes from "prop-types";
@@ -158,33 +158,44 @@ const AdminHeader = ({ children, activeLink }) => {
                     <Link
                       to="/admin-dashboard/Allschools"
                       onClick={() => handleLinkClick("all-schools")}
-                      className={`flex items-center ${
+                      className={`flex items-centerschools ${
                         activeLink === "all-schools" ? activeLinkStyle : defaultLink
                       } rounded-lg`}
                     >
-                      <FaSchool className="mr-2 text-blue-500" /> All Schools
+                      <FaSchool className="mr-2 " /> All Schools
                     </Link>
                   </li>
                   <li>
                     <Link
-                      to="/approved-schools"
+                      to="/admin-dashboard/VerifiedApplications"
                       onClick={() => handleLinkClick("approved-schools")}
                       className={`flex items-center ${
                         activeLink === "approved-schools" ? activeLinkStyle : defaultLink
                       } rounded-lg`}
                     >
-                      <FaCheckCircle className="mr-2 text-green-500" /> Approved Schools
+                      <FaCheckCircle className="mr-2 text-green-500" /> Verified Schools
                     </Link>
                   </li>
                   <li>
                     <Link
-                      to="/pending-schools"
+                      to="/admin-dashboard/PendingApplications"
                       onClick={() => handleLinkClick("pending-schools")}
                       className={`flex items-center ${
                         activeLink === "pending-schools" ? activeLinkStyle : defaultLink
                       } rounded-lg`}
                     >
-                      <FaClock className="mr-2 text-red-500" /> Pending Schools
+                      <FaClock className="mr-2 text-red-500" /> Pending Applications
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/admin-dashboard/AllApplications"
+                      onClick={() => handleLinkClick("pending-schools")}
+                      className={`flex items-center ${
+                        activeLink === "pending-schools" ? activeLinkStyle : defaultLink
+                      } rounded-lg`}
+                    >
+                      <FaFileAlt className="mr-2 text-blue-500" /> All Applications
                     </Link>
                   </li>
                 </ul>
@@ -194,7 +205,7 @@ const AdminHeader = ({ children, activeLink }) => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 lg:ml-64">
+        <main className="flex-1 p-4 lg:ml-50">
           {children}
         </main>
       </div>

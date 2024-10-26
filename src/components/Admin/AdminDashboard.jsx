@@ -1,7 +1,10 @@
 import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
 import AdminHeader from './AdminHeader';
 import React, { useState, useEffect } from 'react';
-import AllSchools from './AllSchools';
+
+
+
+
 const AdminDashboard = () => {
   
     return (
@@ -9,7 +12,7 @@ const AdminDashboard = () => {
        
             <AdminHeader>
             
-    
+  
     </AdminHeader>
     
 <footer className="footer bg-blue-700 text-white text-center py-4 mt-8">

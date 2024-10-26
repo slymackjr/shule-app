@@ -7,6 +7,9 @@ import AdminDashboard from './components/Admin/AdminDashboard'
 import { ProtectedRoutes } from './components/Auth';
 import PrivateRoute from './components/Auth/PrivateRoute';
 import AllSchools from './components/Admin/AllSchools';
+import AllApplications from './components/Admin/AllApplications';
+import UnverifiedApplications from './components/Admin/PendingAppplication';
+import VerifiedApplications from './components/Admin/VerifiedApllications';
 
 const App = () => {
     return (
@@ -20,6 +23,18 @@ const App = () => {
                 <Route 
                     path="/admin-dashboard/Allschools" 
                     element={<PrivateRoute element={<AllSchools />} />} 
+                />
+                <Route 
+                    path="/admin-dashboard/VerifiedApplications" 
+                    element={<PrivateRoute element={<VerifiedApplications />} />} 
+                />
+                <Route 
+                    path="/admin-dashboard/AllApplications" 
+                    element={<PrivateRoute element={<AllApplications />} />} 
+                />
+                <Route 
+                    path="/admin-dashboard/PendingApplications" 
+                    element={<PrivateRoute element={<UnverifiedApplications />} />} 
                 />
                 <Route path="/service" element={<Service />} />
                 <Route path="/parents" element={<Parents />} />
