@@ -12,6 +12,7 @@ import {
   FaUser,
   FaPlusCircle,
   FaEye,
+  FaCheckCircle, FaClock
 } from "react-icons/fa";
 import { skuliAppLogo } from "../../assets/images";
 import PropTypes from "prop-types";
@@ -23,8 +24,7 @@ const AdminHeader = ({ children, activeLink }) => {
   const activeLinkStyle = "text-blue-500 bg-blue-100";
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isTeacherDropdownOpen, setIsTeacherDropdownOpen] = useState(false);
-  const [isClassDropdownOpen, setIsClassDropdownOpen] = useState(false);
+  const [isSchoolDropdownOpen, setIsSchoolDropdownOpen] = useState(false); // New state
   const profileRef = useRef(null);
   const navRef = useRef(null);
 
@@ -44,38 +44,15 @@ const AdminHeader = ({ children, activeLink }) => {
     };
   }, []);
 
-  const handleLogout = async () => {
-    try {
-        const token = localStorage.getItem("authToken"); // Get token from local storage
-
-        if (!token) {
-            console.error("No token found!");
-            return;
-        }
-
-        console.log("Token:", token); // Debugging - to check if the token exists
-
-        // Make the API request for logout
-        await axios.post('http://51.222.207.88:8005/api/v1/logout', {}, {
-            headers: {
-                Authorization: `Bearer ${token}`, // Send token with the request
-            }
-        });
-
-        // Clear the token from localStorage after successful logout
-        localStorage.removeItem("authToken");
-
-        // Redirect to login page
-        navigate('/login');
-    } catch (error) {
-        console.error('Logout failed:', error); // Log the error for debugging
+  const handleLinkClick = (link) => {
+    setActiveLink(link);
+    if (link !== "schools") {
+      setIsSchoolDropdownOpen(false); // Close dropdown if another link is clicked
     }
-};
-
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
-      {/* Navbar */}
       <nav className="fixed top-0 z-50 w-full bg-white shadow">
         <div className="px-3 py-3 lg:px-5 lg:pl-3 flex items-center justify-between">
           <Link to="/" className="flex items-center">
@@ -115,83 +92,116 @@ const AdminHeader = ({ children, activeLink }) => {
         </div>
       </nav>
 
-      {/* Page Layout */}
       <div className="flex flex-row min-h-screen pt-16">
-  {/* Sidebar */}
-  <aside
-    className={`lg:w-64 w-full bg-white shadow-lg lg:block ${
-      isNavOpen ? "block" : "hidden"
-    } fixed lg:relative z-40 h-full`} // Ensure sidebar takes full height
-    ref={navRef}
-  >
-    <ul className="p-4 space-y-4">
-      {/* Sidebar Links */}
-      <li>
-        <Link
-          to="/"
-          className={`flex items-center ${
-            activeLink === "dashboard" ? activeLinkStyle : defaultLink
-          } p-2 rounded-lg`}
+        {/* Sidebar */}
+        <aside
+          className={`lg:w-64 w-full bg-white shadow-lg lg:block ${
+            isNavOpen ? "block" : "hidden"
+          } fixed lg:relative z-40 h-full`}
+          ref={navRef}
         >
-          <FaTachometerAlt className="mr-2" /> Dashboard
-        </Link>
-      </li>
-      <li>
-        <Link
-          to="/"
-          className={`flex items-center ${
-            activeLink === "profile" ? activeLinkStyle : defaultLink
-          } p-2 rounded-lg`}
-        >
-          <FaUserCircle className="mr-2" /> Profile
-        </Link>
-      </li>
-      <li>
-        <Link
-          to="/"
-          className={`flex items-center ${
-            activeLink === "students" ? activeLinkStyle : defaultLink
-          } p-2 rounded-lg`}
-        >
-          <FaRegCreditCard className="mr-2" /> Payments
-        </Link>
-      </li>
-      <li>
-        <Link
-          to="/"
-          className={`flex items-center ${
-            activeLink === "teachers" ? activeLinkStyle : defaultLink
-          } p-2 rounded-lg`}
-        >
-          <FaChalkboardTeacher className="mr-2" /> Manage users
-        </Link>
-      </li>
-      <li>
-        <Link
-          to="/"
-          className={`flex items-center ${
-            activeLink === "school-details"
-              ? activeLinkStyle
-              : defaultLink
-          } p-2 rounded-lg`}
-        >
-          <FaSchool className="mr-2" /> Schools
-        </Link>
-      </li>
-      
-    </ul>
-  </aside>
+          <ul className="p-4 space-y-4">
+            <li>
+              <Link
+                to="/admin-dashboard"
+                className={`flex items-center ${
+                  activeLink === "dashboard" ? activeLinkStyle : defaultLink
+                } p-2 rounded-lg`}
+              >
+                <FaTachometerAlt className="mr-2" /> Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/profile"
+                className={`flex items-center ${
+                  activeLink === "profile" ? activeLinkStyle : defaultLink
+                } p-2 rounded-lg`}
+              >
+                <FaUserCircle className="mr-2" /> Profile
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/payments"
+                className={`flex items-center ${
+                  activeLink === "payments" ? activeLinkStyle : defaultLink
+                } p-2 rounded-lg`}
+              >
+                <FaRegCreditCard className="mr-2" /> Payments
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/manage-users"
+                className={`flex items-center ${
+                  activeLink === "manage-users" ? activeLinkStyle : defaultLink
+                } p-2 rounded-lg`}
+              >
+                <FaChalkboardTeacher className="mr-2" /> Manage users
+              </Link>
+            </li>
 
-  {/* Main Content */}
-  <main className="flex-1 p-4 lg:ml-64">
-    {children}
-  </main>
-</div>
+            {/* Schools Dropdown */}
+            <li>
+              <button
+                onClick={() => setIsSchoolDropdownOpen(!isSchoolDropdownOpen)}
+                className={`flex items-center p-2 rounded-lg ${
+                  activeLink === "schools" ? activeLinkStyle : defaultLink
+                }`}
+              >
+                <FaSchool className="mr-2" /> Schools
+              </button>
+              {isSchoolDropdownOpen && (
+                <ul className="pl-6 mt-2 space-y-2">
+                  <li>
+                    <Link
+                      to="/admin-dashboard/Allschools"
+                      onClick={() => handleLinkClick("all-schools")}
+                      className={`flex items-center ${
+                        activeLink === "all-schools" ? activeLinkStyle : defaultLink
+                      } rounded-lg`}
+                    >
+                      <FaSchool className="mr-2 text-blue-500" /> All Schools
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/approved-schools"
+                      onClick={() => handleLinkClick("approved-schools")}
+                      className={`flex items-center ${
+                        activeLink === "approved-schools" ? activeLinkStyle : defaultLink
+                      } rounded-lg`}
+                    >
+                      <FaCheckCircle className="mr-2 text-green-500" /> Approved Schools
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/pending-schools"
+                      onClick={() => handleLinkClick("pending-schools")}
+                      className={`flex items-center ${
+                        activeLink === "pending-schools" ? activeLinkStyle : defaultLink
+                      } rounded-lg`}
+                    >
+                      <FaClock className="mr-2 text-red-500" /> Pending Schools
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+          </ul>
+        </aside>
 
-
+        {/* Main Content */}
+        <main className="flex-1 p-4 lg:ml-64">
+          {children}
+        </main>
+      </div>
     </div>
   );
 };
+
 
 AdminHeader.propTypes = {
   children: PropTypes.node,

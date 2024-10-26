@@ -6,6 +6,7 @@ import { CreateClasses, CreateTeachers, HeadMasterDashboard, HeadMasterProfile, 
 import AdminDashboard from './components/Admin/AdminDashboard'
 import { ProtectedRoutes } from './components/Auth';
 import PrivateRoute from './components/Auth/PrivateRoute';
+import AllSchools from './components/Admin/AllSchools';
 
 const App = () => {
     return (
@@ -15,6 +16,10 @@ const App = () => {
                 <Route 
                     path="/admin-dashboard" 
                     element={<PrivateRoute element={<AdminDashboard />} />} 
+                />
+                <Route 
+                    path="/admin-dashboard/Allschools" 
+                    element={<PrivateRoute element={<AllSchools />} />} 
                 />
                 <Route path="/service" element={<Service />} />
                 <Route path="/parents" element={<Parents />} />

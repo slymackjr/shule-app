@@ -5,7 +5,6 @@ import Layout from './layout';
 const Home = () => {
   return (
     <div>
-      <Layout/>
   
     <div className="bg-indigo-50 min-h-screen">
       <header className="bg-white shadow">
