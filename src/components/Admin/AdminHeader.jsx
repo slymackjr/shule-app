@@ -43,13 +43,35 @@ const AdminHeader = ({ children, activeLink }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+  const handleLogout = async () => {
+    try {
+        const token = localStorage.getItem("authToken"); // Get token from local storage
+        if (!token) {
+            console.error("No token found!");
+            return;
+        }
+        console.log("Token:", token); // Debugging - to check if the token exists
+        // Make the API request for logout
+        await axios.post('http://51.222.207.88:8005/api/v1/logout', {}, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Send token with the request
+            }
+        });
+        // Clear the token from localStorage after successful logout
+        localStorage.removeItem("authToken");
+        // Redirect to login page
+        navigate('/login');
+    } catch (error) {
+        console.error('Logout failed:', error); // Log the error for debugging
+    }
   const handleLinkClick = (link) => {
     setActiveLink(link);
     if (link !== "schools") {
       setIsSchoolDropdownOpen(false); // Close dropdown if another link is clicked
     }
-  };
+  }
+};
+
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
