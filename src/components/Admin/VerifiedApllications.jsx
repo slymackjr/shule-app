@@ -19,7 +19,7 @@ const VerifiedApplications = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
+        console.log('Response data:', response.data);
         // Set the Applications state to the correct array inside the response
         setApplications(response.data.data || []); // Access response.data.data
         setLoading(false); // Stop loading after data is fetched

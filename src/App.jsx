@@ -38,7 +38,7 @@ const App = () => {
                 />
                 <Route path="/service" element={<Service />} />
                 <Route path="/parents" element={<Parents />} />
-                <Route path="/school-request" element={<SchoolRequest />} />
+                <Route path="/school-request" element={<SchoolRequest />} /> 
                 <Route path="/login" element={<Login />} />
                 <Route path="/head-master-profile" element={<HeadMasterProfile />} />
                 <Route path="/school-details" element={<SchoolDetails />} />

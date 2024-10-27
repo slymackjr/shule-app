@@ -2,103 +2,80 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { bg, skuliAppLogo } from '../assets/images';
-import { AiOutlineLoading3Quarters } from 'react-icons/ai'; // Import loading spinner icon
-import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
-import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; // Import success and error icons
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 const SchoolRequest = () => {
   const [formData, setFormData] = useState({
-    emial: '',
+    school_name: '',
+    email: '',
     phone: '',
     address: '',
     postal_code: '',
     city: '',
-    school_type: '',
     fullname: '',
+    school_type: [],
   });
 
-  const [errors, setErrors] = useState({}); 
-  const [loading, setLoading] = useState(false); 
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrors({}); 
-
+    setErrors({});
     try {
-      // Submit the form data
-      await axios.post('http://localhost:8000/api/school-registration', formData)
-        .then(response => {
-          setLoading(false); // Set loading to false when the request completes
-          if (response.data.response) {
-             // Display success toast
-             toast.success(
-              <div className="flex items-center">
-                <FaCheckCircle className="text-white bg-green-500 rounded-full mr-2 p-1" />
-                {response.data.message}
-              </div>,
-              { position: 'top-center' }
-            );
-          } else {
-            // Display error toast
-            toast.error(
-              <div className="flex items-center">
-                <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
-                {response.data.message}
-              </div>,
-              { position: 'top-center' }
-            );
-          }
-        })
-        .catch(error => {
-          setLoading(false); // Set loading to false in case of error
-          if (error.response && error.response.status === 422) {
-            setErrors(error.response.data.errors); // Set validation errors
-            toast.error(
-              <div className="flex items-center">
-                <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
-                Validation failed. Please check your input.
-              </div>,
-              { position: 'top-center' }
-            );
-          } else {
-            toast.error(
-              <div className="flex items-center">
-                <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
-                Error submitting request.
-              </div>,
-              { position: 'top-center' }
-            );
-          }
-        });
-    } catch (err) {
-      setLoading(false); // Set loading to false in case of unexpected error
-      console.error('Error during form submission:', err);
-      toast.error(
-        <div className="flex items-center">
-          <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
-          An unexpected error occurred.
-        </div>,
-        { position: 'top-center' }
-      );
+      const response = await axios.post('http://51.222.207.88:8005/api/v1/applications', formData);
+      setLoading(false);
+    
+      if (response.data.response) {
+        // Display success toast with success icon and message
+        toast.success(
+          <div className="flex items-center">
+            <FaCheckCircle className="text-white bg-green-500 rounded-full mr-2 p-1" />
+            Your application has been submitted successfully!
+          </div>,
+          { position: 'top-center' }
+        );
+      } else {
+        // Display error toast with error icon and message
+        toast.error(
+          <div className="flex items-center">
+            <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
+            There was an issue with your submission. Please try again.
+          </div>,
+          { position: 'top-center' }
+        );
+      }
+    } catch (error) {
+      setLoading(false);
+      if (error.response && error.response.status === 422) {
+        setErrors(error.response.data.errors);
+        toast.error(
+          <div className="flex items-center">
+            <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
+            Validation failed. Please check your input.
+          </div>,
+          { position: 'top-center' }
+        );
+      } else {
+        toast.error(
+          <div className="flex items-center">
+            <FaTimesCircle className="text-white bg-red-500 rounded-full mr-2 p-1" />
+            Error submitting request.
+          </div>,
+          { position: 'top-center' }
+        );
+      }
     }
-  };  
-
-
+    
+  };
 
   return (
     <div className="bg-indigo-50 min-h-screen">
-      {/* Toast Container */}
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={true}
-        newestOnTop={true}
-        closeOnClick
-        pauseOnHover
-        draggable
-      />
-
+      <ToastContainer autoClose={5000} hideProgressBar={true} newestOnTop={true} closeOnClick pauseOnHover draggable />
       <header className="bg-white shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link to="/">
@@ -114,12 +91,23 @@ const SchoolRequest = () => {
               <div className="md:flex">
                 <div className="md:w-1/2 p-8">
                   <h3 className="text-2xl font-bold text-indigo-600 mb-4">Submit Your School Details</h3>
-                  <p className="text-gray-600 mb-5">
-                    Fill in the details below, and we’ll get back to you in 3 working days.
-                  </p>
+                  <p className="text-gray-600 mb-5">Fill in the details below, and we’ll get back to you in 3 working days.</p>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* School Details */}
+                    <div>
+                      <label className="block text-indigo-600">School Name</label>
+                      <input
+                        type="text"
+                        name="school_name"
+                        className={`w-full p-2 border ${errors.school_name ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
+                        value={formData.school_name}
+                        onChange={(e) => setFormData({ ...formData, school_name: e.target.value })}
+                        placeholder="Enter School Name"
+                        required
+                      />
+                      {errors.school_name && <p className="text-red-600">{errors.school_name[0]}</p>}
+                    </div>
+
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div>
                         <label className="block text-indigo-600">Full Name</label>
@@ -136,6 +124,20 @@ const SchoolRequest = () => {
                       </div>
 
                       <div>
+                        <label className="block text-indigo-600">Email</label>
+                        <input
+                          type="email"
+                          name="email"
+                          className={`w-full p-2 border ${errors.email ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder="Enter Your Email"
+                          required
+                        />
+                        {errors.email && <p className="text-red-600">{errors.email[0]}</p>}
+                      </div>
+
+                      <div>
                         <label className="block text-indigo-600">Phone Number</label>
                         <input
                           type="text"
@@ -143,7 +145,7 @@ const SchoolRequest = () => {
                           className={`w-full p-2 border ${errors.phone ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          placeholder='Enter Your Phone Number'
+                          placeholder="Enter Your Phone Number"
                           required
                         />
                         {errors.phone && <p className="text-red-600">{errors.phone[0]}</p>}
@@ -157,10 +159,10 @@ const SchoolRequest = () => {
                           className={`w-full p-2 border ${errors.address ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.address}
                           onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                          placeholder='Enter Your Address'
+                          placeholder="Enter Your Address"
                           required
                         />
-                        {errors.type && <p className="text-red-600">{errors.type[0]}</p>}
+                        {errors.address && <p className="text-red-600">{errors.address[0]}</p>}
                       </div>
 
                       <div>
@@ -168,18 +170,15 @@ const SchoolRequest = () => {
                         <input
                           type="text"
                           name="postal_code"
-                          className={`w-full p-2 border ${errors.postal_code ? 'border-red-600' : 'border-indigo-600'}  rounded-md`}
+                          className={`w-full p-2 border ${errors.postal_code ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.postal_code}
                           onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
-                          placeholder='Enter Your Postal Code'
+                          placeholder="Enter Your Postal Code"
                           required
                         />
                         {errors.postal_code && <p className="text-red-600">{errors.postal_code[0]}</p>}
                       </div>
-                    </div>
 
-                    {/* Head Master Details */}
-                    <div className="grid gap-4 sm:grid-cols-2 mt-4">
                       <div>
                         <label className="block text-indigo-600">City</label>
                         <input
@@ -188,46 +187,54 @@ const SchoolRequest = () => {
                           className={`w-full p-2 border ${errors.city ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
                           value={formData.city}
                           onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                          placeholder='Enter Your City'
+                          placeholder="Enter Your City"
                           required
                         />
                         {errors.city && <p className="text-red-600">{errors.city[0]}</p>}
                       </div>
-
-                      <div>
-                        <label className="block text-indigo-600">Shool Level</label>
-                        <select
-                          name="school_type"
-                          className={`w-full p-2 border ${errors.school_type ? 'border-red-600' : 'border-indigo-600'} rounded-md`}
-                          value={formData.school_type}
-                          onChange={(e) => setFormData({ ...formData, school_type: e.target.value })}
-                          required
-                          >
-                          <option value="" disabled>Select Title</option>
-                          <option value="primary">Primary</option>
-                          <option value="secondary">Secondary</option>
-                          <option value="high school">High School</option>
-                        </select>
-                        {errors.school_type && <p className="text-red-600">{errors.school_type[0]}</p>}
-                      </div>
                     </div>
+
+                    <div>
+                      <label className="block text-indigo-600">School Level</label>
+                      <div className="flex flex-col">
+                        {['primary', 'secondary', 'high school'].map((level) => (
+                          <label key={level} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              name="school_type"
+                              value={level}
+                              checked={formData.school_type.includes(level)}
+                              onChange={(e) => {
+                                const { value } = e.target;
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  school_type: prev.school_type.includes(value)
+                                    ? prev.school_type.filter((item) => item !== value)
+                                    : [...prev.school_type, value],
+                                }));
+                              }}
+                              className="rounded-full border-indigo-600"
+                            />
+                            <span>{level.charAt(0).toUpperCase() + level.slice(1)}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {errors.school_type && <p className="text-red-600">{errors.school_type[0]}</p>}
+                    </div>
+
                     <div className="flex justify-center">
-                    <button
-                      type="submit"
-                      className={`mt-2 w-40 flex justify-center py-3 rounded-md bg-indigo-600 text-white font-bold hover:bg-indigo-700`}
-                      disabled={loading} // Disable the button when loading is true
-                    >
-                      {loading ? <AiOutlineLoading3Quarters className="animate-spin" /> : 'Submit Request'} {/* Show loading spinner if loading */}
-                    </button>
+                      <button
+                        type="submit"
+                        className="mt-2 w-40 flex justify-center py-3 rounded-md bg-indigo-600 text-white font-bold hover:bg-indigo-700"
+                        disabled={loading}
+                      >
+                        {loading ? <AiOutlineLoading3Quarters className="animate-spin" /> : 'Submit Request'}
+                      </button>
                     </div>
                   </form>
                 </div>
                 <div className="hidden md:block md:w-1/2 bg-indigo-100">
-                <img
-                    src={bg}
-                    alt="Hero Image"
-                    className="w-full h-full object-cover"
-                    />
+                  <img src={bg} alt="Hero Image" className="w-full h-full object-cover" />
                 </div>
               </div>
             </div>
@@ -235,7 +242,6 @@ const SchoolRequest = () => {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-white py-4 shadow-md mt-auto">
         <div className="container mx-auto text-center text-gray-600">
           <p>&copy; {new Date().getFullYear()} SkuliApp. All Rights Reserved.</p>

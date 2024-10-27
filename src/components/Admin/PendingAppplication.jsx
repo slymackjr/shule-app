@@ -53,7 +53,7 @@ const UnverifiedApplications = () => {
 
   return (
     <AdminHeader>
-      <div className="overflow-x-auto m-4 shadow-lg">
+      <div className="overflow-x-auto m-2 shadow-lg">
         <table className="min-w-full border-collapse divide-y divide-gray-300">
           {/* Table Header */}
           <thead>
