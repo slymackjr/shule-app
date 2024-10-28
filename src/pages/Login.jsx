@@ -11,40 +11,50 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        // Clear previous error
-        setError(null);
+        setError(null); // Clear previous error
     
         try {
-            // Make request to Laravel API for login
             const response = await axios.post("http://51.222.207.88:8005/api/v1/login", {
                 email,
                 password
             });
-    
-            // Log the entire response to check where the token is
+            console.log("Full response:", response);
+
     
             // Store token in localStorage (assuming the token is inside response.data)
-            const token = response.data.access_token; // Adjust if the token is located elsewhere in the response
+            const token = response.data.access_token;
             if (token) {
                 localStorage.setItem("authToken", token);
-                console.log('Token stored:', token);
             } else {
                 console.error('No token found in the response.');
             }
     
-            // Redirect to home page or dashboard
-            navigate("/admin-dashboard");
-    
+            // Retrieve user role
+            const userRole = response.data.user.role;
+            console.log('User role:', userRole);
+            localStorage.setItem("role", userRole);
+           
+           
+            // Conditional redirection based on user role
+            if (userRole === "header teacher") {
+                navigate("/head-master-profile");
+            } else if (userRole === "administrator") {
+                navigate("/admin-dashboard");
+            } else {
+                console.warn("Unknown role, defaulting to home");
+                navigate("/");
+            }
         } catch (err) {
-            // Handle errors from Laravel API
             if (err.response && err.response.data.message) {
                 setError(err.response.data.message);
             } else {
                 setError("An error occurred. Please try again.");
             }
         }
+        
+
     };
+    
     
     return (
         <div className="bg-indigo-50 min-h-screen">

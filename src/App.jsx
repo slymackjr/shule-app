@@ -17,25 +17,27 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route 
-                    path="/admin-dashboard" 
-                    element={<PrivateRoute element={<AdminDashboard />} />} 
-                />
-                <Route 
-                    path="/admin-dashboard/Allschools" 
-                    element={<PrivateRoute element={<AllSchools />} />} 
-                />
-                <Route 
-                    path="/admin-dashboard/VerifiedApplications" 
-                    element={<PrivateRoute element={<VerifiedApplications />} />} 
-                />
-                <Route 
-                    path="/admin-dashboard/AllApplications" 
-                    element={<PrivateRoute element={<AllApplications />} />} 
-                />
-                <Route 
-                    path="/admin-dashboard/PendingApplications" 
-                    element={<PrivateRoute element={<UnverifiedApplications />} />} 
-                />
+    path="/admin-dashboard" 
+    element={<PrivateRoute element={<AdminDashboard />} allowedRoles={["administrator"]} />} 
+/>
+<Route 
+    path="/admin-dashboard/Allschools" 
+    element={<PrivateRoute element={<AllSchools />} allowedRoles={["administrator"]} />} 
+/>
+<Route 
+    path="/admin-dashboard/VerifiedApplications" 
+    element={<PrivateRoute element={<VerifiedApplications />} allowedRoles={["administrator"]} />} 
+/>
+<Route 
+    path="/admin-dashboard/AllApplications" 
+    element={<PrivateRoute element={<AllApplications />} allowedRoles={["administrator"]} />} 
+/>
+<Route 
+    path="/admin-dashboard/PendingApplications" 
+    element={<PrivateRoute element={<UnverifiedApplications />} allowedRoles={["administrator"]} />} 
+/>
+
+
                 <Route path="/service" element={<Service />} />
                 <Route path="/parents" element={<Parents />} />
                 <Route path="/school-request" element={<SchoolRequest />} /> 
