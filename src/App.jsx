@@ -42,7 +42,12 @@ const App = () => {
                 <Route path="/parents" element={<Parents />} />
                 <Route path="/school-request" element={<SchoolRequest />} /> 
                 <Route path="/login" element={<Login />} />
-                <Route path="/head-master-profile" element={<HeadMasterProfile />} />
+                
+                <Route 
+    path="/head-master-profile" 
+    element={<PrivateRoute element={<HeadMasterProfile />} allowedRoles={["header teacher"]} />} 
+/>
+
                 <Route path="/school-details" element={<SchoolDetails />} />
                 <Route path="/create-teachers" element={<CreateTeachers />} />
                 <Route path="/view-teachers" element={<ViewTeachers />} />
