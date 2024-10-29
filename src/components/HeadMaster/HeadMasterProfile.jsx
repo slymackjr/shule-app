@@ -16,9 +16,11 @@ const HeadMasterProfile = () => {
         ward: '',
     });
 
-    const [regions, setRegions] = useState([]);
-    const [districts, setDistricts] = useState([]);
-    const [wards, setWards] = useState([]);
+    const [regions, setRegions] = useState([]); 
+    const [districts, setDistricts] = useState([]); 
+    const [wards, setWards] = useState([]); 
+    const [selectedRegion, setSelectedRegion] = useState('');
+    const [selectedDistrict, setSelectedDistrict] = useState('');
 
     // Function to handle input changes
     const handleInputChange = (e) => {
@@ -65,45 +67,88 @@ const HeadMasterProfile = () => {
     }, []);
     
     // Fetch regions on component mount
+    
+
     useEffect(() => {
-        axios.get('http://localhost:8000/api/regions')
-            .then(response => {
-                setRegions(response.data.regions);
+        fetch('/GeoData/Regions.json')
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.features && Array.isArray(data.features)) {
+                    const regionList = data.features.map((feature) => ({
+                        id: feature.properties.region, // Assuming region names are unique identifiers
+                        name: feature.properties.region
+                    }));
+                    setRegions(regionList);
+                    
+                } else {
+                    console.error('Invalid data format for regions:', data);
+                }
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error fetching regions:', error);
             });
     }, []);
 
     const handleRegionChange = (e) => {
-        const selectedRegion = e.target.value;
-        setFormData({ ...formData, region: selectedRegion });
-
-        // Fetch districts based on selected region
-        axios.get(`http://localhost:8000/api/district?region=${selectedRegion}`)
-            .then(response => {
-                setDistricts(response.data.districts);
-                setWards([]); // Clear wards when region changes
+        const selectedRegionId = e.target.value;
+        setSelectedRegion(selectedRegionId);
+        setDistricts([]); // Clear districts on region change
+        setWards([]); // Clear wards on region change
+    
+        // Append " Region" to match the Districts.json format
+        const regionWithSuffix = `${selectedRegionId} Region`;
+    
+        fetch('/GeoData/Districts.json')
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.features && Array.isArray(data.features)) {
+                    const filteredDistricts = data.features
+                        .filter(feature => feature.properties.region === regionWithSuffix) // Match by region
+                        .map(feature => ({
+                            id: feature.properties.District, // Use District as the id
+                            name: feature.properties.District
+                        }));
+    
+                    console.log('Filtered Districts:', filteredDistricts); // Debugging output
+                    setDistricts(filteredDistricts);
+                } else {
+                    console.error('Invalid data format for districts:', data);
+                }
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error fetching districts:', error);
             });
     };
-
+    
     const handleDistrictChange = (e) => {
         const selectedDistrict = e.target.value;
-        setFormData({ ...formData, district: selectedDistrict });
-
-        // Fetch wards based on selected district
-        axios.get(`http://localhost:8000/api/wards?district=${selectedDistrict}`)
-            .then(response => {
-                setWards(response.data.wards);
+        setSelectedDistrict(selectedDistrict);
+    
+        console.log("Selected District:", selectedDistrict); // Check selected district
+    
+        fetch('/GeoData/Wards.json')
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.features && Array.isArray(data.features)) {
+                    // Filter wards that match the selected district directly
+                    const filteredWards = data.features
+                        .filter(feature => feature.properties.District === selectedDistrict) // Match by district name directly
+                        .map(feature => ({
+                            id: feature.properties.Ward,
+                            name: feature.properties.Ward
+                        }));
+    
+                    console.log("Filtered Wards:", filteredWards); // Check filtered wards for debugging
+                    setWards(filteredWards);
+                } else {
+                    console.error('Invalid data format for wards:', data);
+                }
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error fetching wards:', error);
             });
     };
-
+    
     // Handle save and update the profile
     const handleSave = async (e) => {
         e.preventDefault(); // Prevent page reload on form submit
@@ -205,61 +250,55 @@ const HeadMasterProfile = () => {
                     {/* Region Dropdown */}
                     <div>
                         <label className="block text-gray-700">Region</label>
-                        <select
-                            name="region"
-                            value={formData.region}
-                            onChange={handleRegionChange}
-                            className="w-full p-2 border rounded-md mt-1"
-                            required
-                        >
-                            <option value="" disabled>Select Region</option>
-                            {regions.map(region => (
-                                <option key={region.id} value={region.id}>
-                                    {region.name}
-                                </option>
-                            ))}
-                        </select>
+                        <select onChange={handleRegionChange} className="w-full p-2 border rounded-md mt-1">
+                <option value="">Select a Region</option>
+                {regions.map((region) => (
+                    <option key={region.id} value={region.id}>
+                        {region.name}
+                    </option>
+                ))}
+            </select>
                     </div>
 
                     {/* District Dropdown */}
                     <div>
-                        <label className="block text-gray-700">District</label>
-                        <select
-                            name="district"
-                            value={formData.district}
-                            onChange={handleDistrictChange}
-                            className="w-full p-2 border rounded-md mt-1"
-                            disabled={!districts.length}
-                            required
-                        >
-                            <option value="" disabled>Select District</option>
-                            {districts.map(district => (
-                                <option key={district.id} value={district.id}>
-                                    {district.name}
-                                </option>
-                            ))}
-                        </select>
+                        <label className="block text-gray-700">District</label> 
+                        <select onChange={handleDistrictChange} disabled={!districts.length} className="w-full p-2 border rounded-md mt-1">
+                <option value="">Select a District</option>
+                {districts.map((district) => (
+                    <option key={district.id} value={district.id}>
+                        {district.name}
+                    </option>
+                ))}
+            </select>
+
                     </div>
 
                     {/* Ward Dropdown */}
-                    <div>
-                        <label className="block text-gray-700">Ward</label>
-                        <select
-                            name="ward"
-                            value={formData.ward}
-                            onChange={(e) => setFormData({ ...formData, ward: e.target.value })}
-                            className="w-full p-2 border rounded-md mt-1"
-                            disabled={!wards.length}
-                            required
-                        >
-                            <option value="" disabled>Select Ward</option>
-                            {wards.map(ward => (
-                                <option key={ward.id} value={ward.id}>
-                                    {ward.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    {/* Ward Dropdown */}
+<div>
+    <label className="block text-gray-700">Ward</label> 
+    <select
+        onChange={(e) => setFormData({ ...formData, ward: e.target.value })}
+        disabled={!wards.length}
+        className="w-full p-2 border rounded-md mt-1"
+    >
+        <option value="">Select a Ward</option>
+        {wards.map((ward) => (
+            <option key={ward.id} value={ward.name}>
+                {ward.name}
+            </option>
+        ))}
+    </select>
+    <p className="text-red-600 text-sm mt-2">Can't find your ward? fill it  below:</p>
+    <input
+        type="text"
+        placeholder="Enter your ward"
+        className="w-full p-2 border rounded-md mt-1"
+        onChange={(e) => setFormData({ ...formData, ward: e.target.value })}
+    />
+</div>
+
                     <div>
                     <button
                     type='submit'

@@ -74,7 +74,7 @@ const AdminHeader = ({ children, activeLink }) => {
 
 
   return (
-    <div className="bg-gray-50 min-h-screen flex flex-col">
+    <div className="bg-gray-50 min-h-screen flex flex-col"> 
       <nav className="fixed top-0 z-50 w-full bg-white shadow">
         <div className="px-3 py-3 lg:px-5 lg:pl-3 flex items-center justify-between">
           <Link to="/" className="flex items-center">
@@ -117,9 +117,7 @@ const AdminHeader = ({ children, activeLink }) => {
       <div className="flex flex-row min-h-screen pt-16">
         {/* Sidebar */}
         <aside
-          className={`lg:w-64 w-full bg-white shadow-lg lg:block ${
-            isNavOpen ? "block" : "hidden"
-          } fixed lg:relative z-40 h-full`}
+          className={`lg:w-64 bg-white shadow-lg lg:block ${isNavOpen ? 'block' : 'hidden'} fixed lg:relative z-40`}
           ref={navRef}
         >
           <ul className="p-4 space-y-4">

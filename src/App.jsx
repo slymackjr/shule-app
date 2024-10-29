@@ -56,7 +56,7 @@ const App = () => {
                 <Route path="/teacher-login" element={<TeacherLogin />} />
                 <Route 
                     path="/head-master-dashboard"
-                    element={<PrivateRoute element={<HeadMasterDashboard />} />} // Make this route private if needed
+                    element={<PrivateRoute element={<HeadMasterDashboard />} allowedRoles={"header teacher"} />} // Make this route private if needed
                 />
             </Routes>
         </BrowserRouter>
