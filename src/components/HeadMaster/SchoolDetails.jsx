@@ -1,185 +1,67 @@
-import { useState } from 'react';
-import { FaPhone, FaEnvelope} from 'react-icons/fa';// Update this import to your logo's path
+import React, { useEffect, useState } from 'react';
+import { FaPhone, FaEnvelope } from 'react-icons/fa'; // Update this import to your logo's path
 import { DashboardHeader } from '../Common';
+import axios from 'axios';
 
 const SchoolDetails = () => {
-    const [formData, setFormData] = useState({
-        schoolName: '',
-        schoolEmail: '',
-        schoolPhone: '',
-        schoolMotto: '',
-        registrationNumber: '',
-        primaryContact: '',
-        secondaryContact: '',
-        contractNumber: '',
-        educationLevel: 'Primary School',
-    });
+    const [schoolData, setSchoolData] = useState(null);
+    const schoolId = 1; // Replace this with the school ID you want to fetch
+    const authToken = localStorage.getItem('authToken'); // Retrieve the token from local storage
+    console.log('Auth Token:', authToken); // Log the token to the console
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
-    const handleSave = () => {
-        // Implement save logic, likely an API call to update school details
-        console.log('School details saved:', formData);
-    };
-
-    const handleLogoChange = (event) => {
-        const logo = event.target.files[0 ];
-        const reader = new FileReader();
-        reader.onload = () => {
-            setFormData({ ...formData, schoolLogo: reader.result });
+    useEffect(() => {
+        const fetchSchoolDetails = async () => {
+            
+            try {
+                const response = await axios.get(`http://78.47.138.167:8000/api/v1/schools/${schoolId}`, {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`, // Add the auth token to the headers
+                    },
+                });
+                setSchoolData(response.data.data);
+            } catch (error) {
+                console.error('Error fetching school details:', error);
+            }
         };
-        reader.readAsDataURL(logo);
-    };
+
+        fetchSchoolDetails();
+    }, [schoolId, authToken]); // Include authToken in the dependency array
 
     return (
         <DashboardHeader activeLink={'school-details'}>
-            <h1 className="text-2xl font-bold">{formData.educationLevel} Details</h1>
-<div className="mt-4 bg-white p-6 rounded-lg shadow-md">
-    <h2 className="text-xl font-semibold mb-4">School Information</h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* School Name */}
-        <div>
-            <label className="block text-gray-700">School Name</label>
-            <input
-                type="text"
-                name="schoolName"
-                value={formData.schoolName}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded-md mt-1"
-                placeholder="Enter school name"
-            />
-        </div>
-
-        {/* School Email */}
-        <div>
-            <label className="block text-gray-700">School Email</label>
-            <div className="relative">
-                <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
-                <input
-                    type="email"
-                    name="schoolEmail"
-                    value={formData.schoolEmail}
-                    onChange={handleInputChange}
-                    className="w-full pl-10 p-2 border rounded-md mt-1"
-                    placeholder="Enter school email"
-                />
+    <h1 className="text-3xl font-bold text-gray-900">School Details</h1>
+    <div className="mt-6 bg-white p-8 rounded-lg shadow-lg">
+        {schoolData ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+                    <h2 className="text-2xl font-semibold text-gray-900 mb-4">School Information</h2>
+                    <div className="space-y-2">
+                        <p className="text-gray-700"><strong>Name:</strong> {schoolData.name}</p>
+                        <p className="text-gray-700"><strong>Motto:</strong> {schoolData.motto}</p>
+                        <p className="text-gray-700"><strong>Address:</strong> {schoolData.address}</p>
+                        <p className="text-gray-700"><strong>City:</strong> {schoolData.city}</p>
+                        <p className="text-gray-700"><strong>Postal Code:</strong> {schoolData.postal_code}</p>
+                        <p className="text-gray-700"><strong>Type:</strong> {JSON.parse(schoolData.school_type).join(', ')}</p>
+                        <p className="text-gray-700"><strong>Phone:</strong> <FaPhone className="inline mr-1" /> {schoolData.schoolPhone || 'N/A'}</p>
+                        <p className="text-gray-700"><strong>Email:</strong> <FaEnvelope className="inline mr-1" /> {schoolData.schoolEmail || 'N/A'}</p>
+                        <p className={`text-gray-700 ${schoolData.is_active ? 'font-semibold text-green-600' : 'font-semibold text-red-600'}`}>
+                            <strong>Active Status:</strong> {schoolData.is_active ? 'Yes' : 'No'}
+                        </p>
+                    </div>
+                </div>
+                {schoolData.logo && (
+                    <div className="flex flex-col items-center">
+                        <h2 className="text-2xl font-semibold text-gray-900 mb-4">School Logo</h2>
+                        <img src={schoolData.logo} alt="School Logo" className="w-40 h-40 object-cover rounded-lg shadow-md" />
+                    </div>
+                )}
             </div>
-        </div>
-
-        {/* School Phone */}
-        <div>
-            <label className="block text-gray-700">School Phone Number</label>
-            <div className="relative">
-                <FaPhone className="absolute top-3 left-3 text-gray-400" />
-                <input
-                    type="text"
-                    name="schoolPhone"
-                    value={formData.schoolPhone}
-                    onChange={handleInputChange}
-                    className="w-full pl-10 p-2 border rounded-md mt-1"
-                    placeholder="Enter school phone number"
-                />
-            </div>
-        </div>
-
-        {/* School Motto */}
-        <div>
-            <label className="block text-gray-700">School Motto</label>
-            <input
-                type="text"
-                name="schoolMotto"
-                value={formData.schoolMotto}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded-md mt-1"
-                placeholder="Enter school motto"
-            />
-        </div>
-
-        {/* Registration Number */}
-        <div>
-            <label className="block text-gray-700">Registration Number</label>
-            <input
-                type="text"
-                name="registrationNumber"
-                value={formData.registrationNumber}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded-md mt-1"
-                placeholder="Enter registration number"
-            />
-        </div>
-
-        {/* Primary Contact */}
-        <div>
-            <label className="block text-gray-700">Primary Contact</label>
-            <input
-                type="text"
-                name="primaryContact"
-                value={formData.primaryContact}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded-md mt-1"
-                placeholder="Enter primary contact"
-            />
-        </div>
-
-        {/* Secondary Contact */}
-        <div>
-            <label className="block text-gray-700">Secondary Contact</label>
-            <input
-                type="text"
-                name="secondaryContact"
-                value={formData.secondaryContact}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded-md mt-1"
-                placeholder="Enter secondary contact"
-            />
-        </div>
-
-        {/* Contract Number */}
-        <div>
-            <label className="block text-gray-700">Contract Number</label>
-            <input
-                type="text"
-                name="contractNumber"
-                value={formData.contractNumber}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded-md mt-1"
-                placeholder="Enter contract number"
-            />
-        </div>
-
-        {/* School Logo */}
-        <div>
-            <label className="block text-gray-700">School Logo</label>
-            <input
-                type="file"
-                name="schoolLogo"
-                onChange={handleLogoChange}
-                className="w-full p-2 border rounded-md mt-1"
-            />
-            {formData.schoolLogo && (
-                <img
-                    src={formData.schoolLogo}
-                    alt="School Logo"
-                    className="w-20 h-20 mt-2"
-                />
-            )}
-        </div>
+        ) : (
+            <p className="text-gray-700">Loading school details...</p>
+        )}
     </div>
+</DashboardHeader>
 
-    <button
-        onClick={handleSave}
-        className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-    >
-        Save Changes
-    </button>
-</div>
-        </DashboardHeader>
     );
 };
 

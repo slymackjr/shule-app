@@ -14,7 +14,7 @@ const VerifiedApplications = () => {
       try {
         const token = localStorage.getItem('authToken');
 
-        const response = await axios.get('http://51.222.207.88:8005/api/v1/applications', {
+        const response = await axios.get('http://78.47.138.167:8000/api/v1/applications', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -117,9 +117,10 @@ const AdminHeader = ({ children, activeLink }) => {
       <div className="flex flex-row min-h-screen pt-16">
         {/* Sidebar */}
         <aside
-          className={`lg:w-64 bg-white shadow-lg lg:block ${isNavOpen ? 'block' : 'hidden'} fixed lg:relative z-40`}
+          className={`w-64 bg-white shadow-lg lg:block ${isNavOpen ? 'block' : 'hidden'} fixed lg:relative z-40`}
           ref={navRef}
         >
+          
           <ul className="p-4 space-y-4">
             <li>
               <Link

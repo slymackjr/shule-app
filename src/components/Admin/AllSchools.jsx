@@ -14,7 +14,7 @@ const [schools, setSchools] = useState([]); // State to hold the schools data
           try {
               const token = localStorage.getItem('authToken');
 
-              const response = await axios.get('http://51.222.207.88:8005/api/v1/schools', {
+              const response = await axios.get('http://78.47.138.167:8000/api/v1/schools', {
                   headers: {
                       Authorization: `Bearer ${token}`,
                   },

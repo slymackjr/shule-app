@@ -14,7 +14,7 @@ const Login = () => {
         setError(null); // Clear previous error
     
         try {
-            const response = await axios.post("http://51.222.207.88:8005/api/v1/login", {
+            const response = await axios.post("http://78.47.138.167:8000/api/v1/login", {
                 email,
                 password
             });
