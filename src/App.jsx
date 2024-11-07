@@ -10,8 +10,13 @@ import AllSchools from './components/Admin/AllSchools';
 import AllApplications from './components/Admin/AllApplications';
 import UnverifiedApplications from './components/Admin/PendingAppplication';
 import VerifiedApplications from './components/Admin/VerifiedApllications';
+import { toast, ToastContainer } from 'react-toastify';
 
 const App = () => {
+    // Configure toast notifications
+
+   
+
     return (
 <BrowserRouter>
             <Routes>
@@ -59,6 +64,7 @@ const App = () => {
                     element={<PrivateRoute element={<HeadMasterDashboard />} allowedRoles={"header teacher"} />} // Make this route private if needed
                 />
             </Routes>
+        <ToastContainer/>
         </BrowserRouter>
     );
 };

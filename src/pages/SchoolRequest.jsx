@@ -27,7 +27,7 @@ const SchoolRequest = () => {
     setLoading(true);
     setErrors({});
     try {
-      const response = await axios.post('http://51.222.207.88:8005/api/v1/applications', formData);
+      const response = await axios.post('http://78.47.138.167:8000/api/v1/applications', formData);
       setLoading(false);
     
       if (response.data.response) {

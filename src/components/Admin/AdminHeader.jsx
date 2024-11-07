@@ -52,7 +52,7 @@ const AdminHeader = ({ children, activeLink }) => {
         }
         console.log("Token:", token); // Debugging - to check if the token exists
         // Make the API request for logout
-        await axios.post('http://51.222.207.88:8005/api/v1/logout', {}, {
+        await axios.post('http://78.47.138.167:8000/api/v1/logout', {}, {
             headers: {
                 Authorization: `Bearer ${token}`, // Send token with the request
             }
