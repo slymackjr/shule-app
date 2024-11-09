@@ -40,7 +40,7 @@ const Home = () => {
                 Register a School
               </Link>
               <Link
-                to="/teacher-login"
+                to="/login"
                 className="text-white border-2 border-blue-700 bg-blue-700 hover:no-underline p-3 rounded-md hover:bg-transparent hover:text-blue-700"
               >
                 Login Now

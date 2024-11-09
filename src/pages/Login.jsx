@@ -19,9 +19,12 @@ const Login = () => {
                 password
             });
             console.log("Full response:", response);
-
+            
     
             // Store token in localStorage (assuming the token is inside response.data)
+            const schoolId = response.data.user.school_id;
+            localStorage.setItem("schoolId", schoolId);
+        
             const token = response.data.access_token;
             if (token) {
                 localStorage.setItem("authToken", token);
@@ -37,7 +40,7 @@ const Login = () => {
            
             // Conditional redirection based on user role
             if (userRole === "header teacher") {
-                navigate("/head-master-profile");
+                navigate("/head-master-dashboard");
             } else if (userRole === "administrator") {
                 navigate("/admin-dashboard");
             } else {

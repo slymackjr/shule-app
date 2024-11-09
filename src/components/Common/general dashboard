@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { FaUserCircle, FaCaretDown, FaBars, FaTimes, FaTachometerAlt, FaUserGraduate, FaChalkboardTeacher, FaSchool, FaChessBoard, FaUser, FaPlusCircle, FaEye, FaUserPlus, } from 'react-icons/fa';
+import { FaUserCircle, FaCaretDown, FaBars, FaTimes, FaTachometerAlt, FaUserGraduate, FaChalkboardTeacher, FaSchool, FaChessBoard, FaUser, FaPlusCircle, FaEye, } from 'react-icons/fa';
 import { skuliAppLogo } from '../../assets/images';
 import PropTypes from 'prop-types';
 
@@ -127,8 +127,6 @@ const DashboardHeader = ({
                             </button>
                             {isTeacherDropdownOpen && (
                                 <ul className="py-2 space-y-2">
-                                   
-                                   
                                     <li>
                                         <Link
                                             to="/create-teachers"

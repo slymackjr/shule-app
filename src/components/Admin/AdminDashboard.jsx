@@ -1,7 +1,6 @@
 import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
 import AdminHeader from './AdminHeader';
 import React, { useState, useEffect } from 'react';
-import YourComponent from './testLocation';
 
 
 
@@ -12,7 +11,7 @@ const AdminDashboard = () => {
       <div>
        
             <AdminHeader>
-            <YourComponent/>
+           
   
     </AdminHeader>
     

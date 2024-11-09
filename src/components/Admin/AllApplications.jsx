@@ -3,6 +3,7 @@ import AdminHeader from './AdminHeader';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {FaCheckCircle, FaClock} from 'react-icons/fa';
+import SchoolModal from "./SchoolModal";
 
 const AllApplications = () => {
 const [Applications, setApplications] = useState([]); // State to hold the Applications data
